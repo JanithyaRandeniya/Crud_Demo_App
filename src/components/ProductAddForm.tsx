@@ -76,7 +76,7 @@ export default function ProductAddForm() {
         <Box
           sx={{ borderBottom: '1px dashed #c8cdd3', pb: 1, display: 'flex' }}
         >
-          <Typography variant="h5" fontWeight="bold">
+          <Typography variant="h5" fontWeight="bold" color='#0600A5'>
             Create New Product
           </Typography>
         </Box>
@@ -97,7 +97,7 @@ export default function ProductAddForm() {
               width: { xs: '100%', sm: '100%', md: '33.333%' },
             }}
           >
-            <Typography variant="h6" fontWeight="bold" mb={2}>
+            <Typography variant="h6" fontWeight="bold" mb={2} color='#49468D'>
               Image
             </Typography>
             <Typography variant="body1">
@@ -148,9 +148,9 @@ export default function ProductAddForm() {
                   justifyContent: 'center',
                   textAlign: 'center',
                   '&:hover': {
-                    borderColor: '#bcbfc4',
+                    borderColor: '#55546D',
                     '& svg': {
-                      color: '#bcbfc4',
+                      color: '#55546D',
                     },
                   },
                 }}
@@ -158,14 +158,14 @@ export default function ProductAddForm() {
                 <CloudUploadIcon
                   fontSize="large"
                   sx={{
-                    color: '#d1d5db',
+                    color: '#8481E3',
                   }}
                 />
                 <Typography variant="body1" mt={2}>
                   <span
                     style={{
                       fontWeight: 'bold',
-                      color: 'hsla(185, 64%, 39%, 1.0)',
+                      color: '#362FEE',
                     }}
                   >
                     Upload an image
@@ -243,7 +243,7 @@ export default function ProductAddForm() {
               width: { xs: '100%', sm: '100%', md: '33.333%' },
             }}
           >
-            <Typography variant="h6" fontWeight="bold" mb={2}>
+            <Typography variant="h6" fontWeight="bold" mb={2} color='#49468D'>
               Description
             </Typography>
             <Typography variant="body1">
@@ -262,7 +262,7 @@ export default function ProductAddForm() {
           >
             {/* NAME (start) */}
             <TextField
-              label="Name"
+              label="Product Name "
               fullWidth
               required
               sx={{ marginBottom: '1.2em' }}
@@ -277,7 +277,7 @@ export default function ProductAddForm() {
               <InputLabel htmlFor="price">Amount</InputLabel>
               <OutlinedInput
                 startAdornment={
-                  <InputAdornment position="start">$</InputAdornment>
+                  <InputAdornment position="start">Rs.</InputAdornment>
                 }
                 label="Amount"
                 fullWidth
@@ -343,8 +343,8 @@ export default function ProductAddForm() {
               variant="contained"
               sx={{
                 height: '48px',
-                backgroundColor: 'hsla(185, 64%, 39%, 1.0)',
-                '&:hover': { backgroundColor: 'hsla(185, 64%, 29%, 1.0)' },
+                backgroundColor: '#7A77D4',
+                '&:hover': { backgroundColor: '#302CB2' },
               }}
             >
               Add Product
