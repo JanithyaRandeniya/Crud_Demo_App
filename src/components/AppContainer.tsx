@@ -16,14 +16,10 @@ import {
   Toolbar,
   AppBar,
   IconButton,
-  Button,
-  Typography,
 } from '@mui/material';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
-import { FastForwardOutlined } from '@mui/icons-material';
-import { Alfa_Slab_One } from 'next/font/google';
 
 export default function AppContainer({
   children,
@@ -31,16 +27,10 @@ export default function AppContainer({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
-  const handleDrawerClose = () => {
-    setDrawerOpen(false);
-  };
-
-  const handleDrawerToggle = () => {
-    setDrawerOpen(!drawerOpen);
-  };
+  const handleDrawerClose = () => setDrawerOpen(false);
+  const handleDrawerToggle = () => setDrawerOpen(!drawerOpen);
 
   const drawerLinks = [
     {
@@ -50,16 +40,15 @@ export default function AppContainer({
     },
   ];
 
-  const drawer = (
+  const drawerContent = (
     <>
       <Toolbar sx={{ justifyContent: 'center' }}>
         <Link href="/admin">
           <StorefrontIcon
             sx={{
               fontSize: { xs: 35, sm: 45 },
-              color: {
-                xs: 'hsla(185, 64%, 39%, 1.0)',
-              },
+              color: 'hsla(185, 64%, 39%, 1.0)',
+              cursor: 'pointer',
             }}
           />
         </Link>
@@ -70,21 +59,12 @@ export default function AppContainer({
       <List>
         {drawerLinks.map((drawLink, index) => (
           <ListItem key={index} disablePadding onClick={handleDrawerClose}>
-            <Link
-              href={drawLink.path}
-              passHref
-              style={{ textDecoration: 'none' }}
-            >
-              <ListItemButton
-                disableRipple
-                sx={{
-                  width: '100vw',
-                }}
-              >
+            <Link href={drawLink.path}>
+              <ListItemButton>
                 <ListItemIcon>{drawLink.icon}</ListItemIcon>
                 <ListItemText
                   primary={drawLink.name}
-                  sx={{ color: '#001DA0' }}
+                  sx={{ color: 'rgb(75, 85, 99)' }}
                 />
               </ListItemButton>
             </Link>
@@ -98,13 +78,15 @@ export default function AppContainer({
 
   return (
     <Box sx={{ display: 'flex' }}>
-      {/* reset defaults */}
       <CssBaseline />
 
-      {/* header */}
-      <AppBar>
-        <Toolbar sx={{ backgroundColor: '#ACAAE4' }}>
+      <AppBar
+        position="fixed"
+        sx={{ backgroundColor: '#ffffff', boxShadow: 'none' }}
+      >
+        <Toolbar>
           <IconButton
+            edge="start"
             sx={{ mr: 2, display: { sm: 'none' }, color: 'black' }}
             onClick={handleDrawerToggle}
           >
@@ -113,45 +95,51 @@ export default function AppContainer({
         </Toolbar>
       </AppBar>
 
-      {/* navbar */}
-      <Box component="nav" sx={{ width: { sm: drawerWidth } }}>
+      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+        {/* Permanent drawer for desktop */}
         <Drawer
           variant="permanent"
-          open={true}
+          open
           sx={{
             display: { xs: 'none', sm: 'block' },
             '& .MuiDrawer-paper': {
               width: drawerWidth,
+              boxSizing: 'border-box',
             },
           }}
         >
-          {drawer}
+          {drawerContent}
         </Drawer>
 
+        {/* Temporary drawer for mobile */}
         <Drawer
           variant="temporary"
           open={drawerOpen}
           onClose={handleDrawerClose}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
           sx={{
             display: { xs: 'block', sm: 'none' },
             '& .MuiDrawer-paper': {
               width: drawerWidth,
+              boxSizing: 'border-box',
             },
           }}
         >
-          {drawer}
+          {drawerContent}
         </Drawer>
       </Box>
 
-      {/* main */}
+      {/* Main content */}
       <Box
         component="main"
         sx={{
-          height: '100%',
-          margin: '80px auto',
-          padding: '2rem',
-          color: '#B000000',
-          width: { xs: '100%', sm: '70%' },
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          mt: 8,
+          color: 'rgb(75, 85, 99)',
         }}
       >
         {children}

@@ -1,8 +1,6 @@
-
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { IconButton } from '@mui/material';
 import {
@@ -16,25 +14,30 @@ import {
   Typography,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { useState } from 'react';
+import * as actions from '@/actions';
 
-interface Product {
-  name: string;
-  price: string;
-  quantity: number;
-  description: string;
-  image: File | null;
+interface ProductEditFormProps {
+  product: {
+    id: number;
+    name: string;
+    description: string;
+    price: string;
+    quantity: number;
+    imageUrl: string;
+    status: string;
+  };
 }
 
-export default function ProductAddForm() {
-  const [fields, setFields] = React.useState<Product>({
-    name: '',
-    price: '',
-    quantity: 0,
-    description: '',
-    image: null,
-  });
-
-  const [imagePreview, setImagePreview] = React.useState<string | null>('');
+export default function ProductEditForm({ product }: ProductEditFormProps) {
+  const [name, setName] = useState<string>(product.name);
+  const [price, setPrice] = useState<string>(product.price);
+  const [quantity, setQuantity] = useState<number>(product.quantity);
+  const [description, setDescription] = useState<string>(product.description);
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    product.imageUrl
+  );
 
   const handleImageChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const files = evt.target.files;
@@ -42,12 +45,10 @@ export default function ProductAddForm() {
     if (files && files.length > 0) {
       const file = files[0];
 
-      setFields((prevFields) => ({
-        ...prevFields,
-        image: file,
-      }));
+      setImage(file);
 
       const reader = new FileReader();
+
       reader.onload = () => {
         if (typeof reader.result === 'string') {
           setImagePreview(reader.result);
@@ -57,27 +58,32 @@ export default function ProductAddForm() {
     }
   };
 
-  const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = evt.target;
+  const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
 
-    setFields((prevFields) => ({
-      ...prevFields,
-      [name]: value,
-    }));
+    const formData = new FormData();
+
+    formData.append('id', product.id.toString());
+    formData.append('name', name);
+    formData.append('price', price);
+    formData.append('quantity', quantity.toString());
+    formData.append('description', description);
+
+    if (image) {
+      formData.append('image', image);
+    }
+
+   actions.productEdit(formData);
   };
 
   return (
     <>
-      <form
-        action="/api/admin/product"
-        method="POST"
-        encType="multipart/form-data"
-      >
+      <form onSubmit={handleSubmit}>
         <Box
           sx={{ borderBottom: '1px dashed #c8cdd3', pb: 1, display: 'flex' }}
         >
-          <Typography variant="h5" fontWeight="bold" color='#0600A5'>
-            Create New Product
+          <Typography variant="h5" fontWeight="bold">
+            Update Product
           </Typography>
         </Box>
 
@@ -97,7 +103,7 @@ export default function ProductAddForm() {
               width: { xs: '100%', sm: '100%', md: '33.333%' },
             }}
           >
-            <Typography variant="h6" fontWeight="bold" mb={2} color='#49468D'>
+            <Typography variant="h6" fontWeight="bold" mb={2}>
               Image
             </Typography>
             <Typography variant="body1">
@@ -126,7 +132,6 @@ export default function ProductAddForm() {
               <input
                 type="file"
                 accept="image/*"
-                required
                 id="image"
                 name="image"
                 onChange={handleImageChange}
@@ -148,9 +153,9 @@ export default function ProductAddForm() {
                   justifyContent: 'center',
                   textAlign: 'center',
                   '&:hover': {
-                    borderColor: '#55546D',
+                    borderColor: '#bcbfc4',
                     '& svg': {
-                      color: '#55546D',
+                      color: '#bcbfc4',
                     },
                   },
                 }}
@@ -158,14 +163,14 @@ export default function ProductAddForm() {
                 <CloudUploadIcon
                   fontSize="large"
                   sx={{
-                    color: '#8481E3',
+                    color: '#d1d5db',
                   }}
                 />
                 <Typography variant="body1" mt={2}>
                   <span
                     style={{
                       fontWeight: 'bold',
-                      color: '#362FEE',
+                      color: 'hsla(185, 64%, 39%, 1.0)',
                     }}
                   >
                     Upload an image
@@ -243,12 +248,10 @@ export default function ProductAddForm() {
               width: { xs: '100%', sm: '100%', md: '33.333%' },
             }}
           >
-            <Typography variant="h6" fontWeight="bold" mb={2} color='#49468D'>
+            <Typography variant="h6" fontWeight="bold" mb={2}>
               Description
             </Typography>
-            <Typography variant="body1">
-              Add your product details here
-            </Typography>
+            <Typography variant="body1">Update product details here</Typography>
           </Box>
 
           <Box
@@ -262,14 +265,14 @@ export default function ProductAddForm() {
           >
             {/* NAME (start) */}
             <TextField
-              label="Product Name "
+              label="Name"
               fullWidth
               required
               sx={{ marginBottom: '1.2em' }}
               id="name"
               name="name"
-              value={fields.name}
-              onChange={handleChange}
+              value={name}
+              onChange={(evt) => setName(evt.target.value)}
             />
 
             {/* PRICE (start) */}
@@ -284,8 +287,8 @@ export default function ProductAddForm() {
                 required
                 id="price"
                 name="price"
-                value={fields.price}
-                onChange={handleChange}
+                value={price}
+                onChange={(evt) => setPrice(evt.target.value)}
               />
             </FormControl>
 
@@ -294,13 +297,13 @@ export default function ProductAddForm() {
               type="number"
               label="Quantity"
               fullWidth
-              inputProps={{ min: '0' }}
+              inputProps = {{ min: '0' }}
               required
               sx={{ marginBottom: '1.4em' }}
               id="quantity"
               name="quantity"
-              value={fields.quantity}
-              onChange={handleChange}
+              value={quantity}
+              onChange={(evt) => setQuantity(parseInt(evt.target.value))}
             />
 
             {/* DESCRIPTION (start) */}
@@ -315,8 +318,8 @@ export default function ProductAddForm() {
                 sx={{ marginBottom: '1.2em' }}
                 id="description"
                 name="description"
-                value={fields.description}
-                onChange={handleChange}
+                value={description}
+                onChange={(evt) => setDescription(evt.target.value)}
               />
             </Box>
           </Box>
@@ -343,11 +346,11 @@ export default function ProductAddForm() {
               variant="contained"
               sx={{
                 height: '48px',
-                backgroundColor: '#7A77D4',
-                '&:hover': { backgroundColor: '#302CB2' },
+                backgroundColor: 'hsla(185, 64%, 39%, 1.0)',
+                '&:hover': { backgroundColor: 'hsla(185, 64%, 29%, 1.0)' },
               }}
             >
-              Add Product
+              Update Product
             </Button>
           </Box>
         </Box>
